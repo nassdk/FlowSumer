@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nassdk.flowsummer.domain.MainUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,8 @@ class MainViewModel(private val useCase: MainUseCase) : ViewModel() {
 
         useCase.getSumsFlow(n = _viewState.value.inputState.replace(" ", "").toInt())
             .onEach { newSum ->
+                delay(100)
+
                 _viewState.update { oldState ->
                     oldState.copy(sum = oldState.sum.plus("$newSum "))
                 }
