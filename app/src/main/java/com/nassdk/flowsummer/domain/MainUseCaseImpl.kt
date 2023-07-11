@@ -25,7 +25,7 @@ class MainUseCaseImpl : MainUseCase {
             size = n,
             init = { index ->
                 flow {
-                    delay(100L)
+                    delay(100L * (index + 1))
                     emit(index + 1)
                 }
             }

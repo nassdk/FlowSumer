@@ -1,5 +1,6 @@
 package com.nassdk.flowsummer.ui
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -32,9 +36,15 @@ class MainViewModel(private val useCase: MainUseCase) : ViewModel() {
 
 
         useCase.getSumsFlow(n = _viewState.value.inputState.replace(" ", "").toInt())
+            .buffer()
+            .flatMapConcat { value ->
+                flow {
+                    emit(value)
+                    delay(100)
+                }
+            }
             .onEach { newSum ->
-                delay(100)
-
+                Log.d("MainViewModel", "${System.currentTimeMillis()}")
                 _viewState.update { oldState ->
                     oldState.copy(sum = oldState.sum.plus("$newSum "))
                 }
